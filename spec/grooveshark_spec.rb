@@ -1,5 +1,5 @@
 require 'spec_helper.rb'
-require './grooveshark.rb'
+require './rubyshark.rb'
 
 describe Request do
   #describe '.start_session' do
