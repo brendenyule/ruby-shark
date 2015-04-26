@@ -40,9 +40,9 @@ class Request
   def create_payload
     @payload[:header] = @@header
     @jpayload = @payload.to_json
-    puts "*********************************"
-    puts @jpayload
-    puts "*********************************"
+    #puts "*********************************"
+    #puts @jpayload
+    #puts "*********************************"
   end
 
   def create_signature
@@ -83,7 +83,7 @@ class Request
   # Needs testing
   def remove_user_favorite_songs(song_ids)
     @payload[:method] = "removeUserFavoriteSongs"
-    @payload[:parameters] = song_ids
+    @payload[:parameters] = { :songIDs => song_ids }
     create_payload
     create_signature
   end
@@ -107,8 +107,9 @@ class Request
   end
 
   #
-  def add_user_favorite_song
-    @payload[:method] = "addUserFavoriteSong"
+  def add_user_favorite_song(song_id)
+    @payload[:method]     = "addUserFavoriteSong"
+    @payload[:parameters] = { :songID => song_id }
     create_payload
     create_signature
   end
@@ -139,7 +140,7 @@ class Request
   #
   def get_playlist_info(playlist_id)
     @payload[:method] = "getPlaylistInfo"
-    @payload[:parameters] = { playlistID => playlist_id }
+    @payload[:parameters] = { :playlistID => playlist_id }
     create_payload
     create_signature
   end
@@ -164,7 +165,6 @@ class Request
     create_signature
   end
 
-  #
   def get_service_description
     @payload[:method] = "getServiceDescription"
     create_payload
@@ -174,15 +174,14 @@ class Request
   #
   def undelete_playlist(playlist_id)
     @payload[:method] = "undeletePlaylist"
-    @payload[:parameters] = { playlistID => playlist_id }
+    @payload[:parameters] = { :playlistID => playlist_id }
     create_payload
     create_signature
   end
 
-  #
   def delete_playlist(playlist_id)
     @payload[:method] = "deletePlaylist"
-    @payload[:parameters] = { playlistID => playlist_id }
+    @payload[:parameters] = { :playlistID => playlist_id }
     create_payload
     create_signature
   end
@@ -250,7 +249,7 @@ class Request
   #
   def get_albums_info(album_ids)
     @payload[:method] = "getAlbumsInfo"
-    @payload[:parameters] = { :albumID => album_ids }
+    @payload[:parameters] = { :albumIDs => album_ids }
     create_payload
     create_signature
   end
@@ -272,9 +271,9 @@ class Request
   end
 
   #
-  def get_does_artist_exist(song_id)
+  def get_does_artist_exist(artist_id)
     @payload[:method] = "getDoesArtistExist"
-    @payload[:parameters] = { :ArtistID => artist_id }
+    @payload[:parameters] = { :artistID => artist_id }
     create_payload
     create_signature
   end
@@ -304,7 +303,7 @@ class Request
   end
 
   #
-  def get_artist_popular_songs
+  def get_artist_popular_songs(artist_id)
     # Return 100 results!
     @payload[:method] = "getArtistPopularSongs"
     @payload[:parameters] = { :artistID => artist_id }
@@ -319,9 +318,9 @@ session_init.start_session
 
 #Simple hello_world test
 test = Request.new
-test.get_popular_songs_month
+test.ping_service
 request = test.send_request
-test.start_session
 request = JSON.parse(request.body)
+#puts request
 puts JSON.pretty_generate(request)
 

@@ -2,14 +2,6 @@ require 'spec_helper.rb'
 require './rubyshark.rb'
 
 describe Request do
-  #describe '.start_session' do
-    #it "Returuns an authenticated session_id" do
-      #request = Request.new
-      #status = request.start_session["result"]["success"]
-      #expect(status).to be_truthy
-    #end
-  #end
-
   before :all do
       Request.new.start_session
   end
@@ -17,15 +9,6 @@ describe Request do
   before :each do
     @request = Request.new
   end
-
-  describe '.get_user_playlist' do
-    it 'does not return an error' do
-      @request.get_user_info
-      response = @request.send_request
-      expect(response).not_to include("errors")
-    end
-  end
-
 
   describe '.get_user_favorite_songs' do
     it 'does not return an error' do
@@ -51,12 +34,6 @@ describe Request do
   end
 
 
-  describe '.get_user_playlists' do
-    it 'returns the playlists belonging to the user' do
-    end
-  end
-
-
   describe '.get_user_subscription_details' do
     it 'Should return false if user does not have plus membership' do
       @request.get_user_subscription_details
@@ -68,24 +45,22 @@ describe Request do
 
   describe '.add_user_favorite_song' do
     it 'adds a song to the favorites songs of the user' do
+      @request.remove_user_favorite_songs(41999592)
+      @request.send_request
+      @request.add_user_favorite_song(41999592)
+      response = @request.send_request["result"]["success"]
+      expect(response).to be_truthy
     end
   end
   
 
   describe '.remove_user_favorite_song' do
     it 'removes a song from the favorite songs of the user' do
-    end
-  end
-
-
-  describe '.subscribe_playlist' do
-    it 'subscribes the user to a playlist' do
-    end
-  end
-
-
-  describe '.unsubscribe_playlist' do
-    it 'unsubscribes the user from a playlist' do
+      @request.add_user_favorite_song(41999592)
+      @request.send_request
+      @request.remove_user_favorite_songs(41999592)
+      response = @request.send_request["result"]["success"]
+      expect(response).to be_truthy
     end
   end
 
@@ -99,20 +74,20 @@ describe Request do
   end
 
 
-  describe '.get_playlist_info' do
-    it 'returns info about a playlist' do
-    end
-  end
-
-
   describe '.get_popular_songs_today' do
     it 'returns top songs for the day' do
+      @request.get_popular_songs_today
+      response = @request.send_request["result"]
+      expect(response).to include("songs")
     end
   end
 
 
   describe '.get_popular_songs_month' do
     it 'returns top songs for this month' do
+      @request.get_popular_songs_today
+      response = @request.send_request["result"]
+      expect(response).to include("songs")
     end
   end
 
@@ -128,121 +103,262 @@ describe Request do
 
   describe '.get_service_description' do
     it 'describes service methods' do
-    end
-  end
-
-
-  describe '.undelete_playlist' do
-    it 'restores a deleted playlist' do
-    end
-  end
-
-
-  describe '.delete_playlist' do
-    it 'deletes a playlist' do
+      @request.get_service_description
+      response = @request.send_request["result"]["methods"]
+      expect(response).to be_truthy
     end
   end
 
 
   describe '.get_playlist' do
     it 'returns playlist info and songs' do
+      @request.get_playlist_info(105379638)
+      response = @request.send_request["result"]["PlaylistName"]
+      expect(response).to eq("get_playlist_info")
     end
   end
 
-  
-  describe '.set_playlist_songs' do
-    it 'overwrites the songs in a playlist with new songs' do
+
+  describe '.get_playlist_info' do
+    it 'returns info about a playlist' do
+      @request.get_playlist_info(105379638)
+      response = @request.send_request["result"]["PlaylistName"]
+      expect(response).to eq("get_playlist_info")
+    end
+  end
+
+
+  describe '.get_user_playlist' do
+    it 'returns the playlists belonging to the user' do
+      @request.get_user_playlists
+      response = @request.send_request["result"]
+      expect(response).to include("playlists")
+    end
+
+    it 'does not return an error' do
+      @request.get_user_info
+      response = @request.send_request
+      expect(response).not_to include("errors")
     end
   end
 
 
   describe '.create_playlist' do
     it 'creates a playlist' do
+      @request.create_playlist("create_playlist", [41999592, 41259399,41878461])
+      response = @request.send_request["result"]
+      playlist_id = response["playlistID"]
+      success = response["success"]
+      expect(success).to be_truthy
+
+      @request.delete_playlist(playlist_id)
+      @request.send_request
+    end
+  end
+
+
+  describe '.delete_playlist' do
+    it 'deletes a playlist' do
+      @request.create_playlist("create_playlist", [41999592, 41259399,41878461])
+      playlist_id = @request.send_request["result"]["playlistID"]
+      @request.delete_playlist(playlist_id)
+      response = @request.send_request["result"]["success"]
+      expect(response).to be_truthy
+    end
+  end
+
+
+  # method is not working as it should, might be restricted
+  #describe '.undelete_playlist' do
+    #it 'restores a deleted playlist' do
+      #@request.create_playlist("create_playlist", [41999592, 41259399,41878461])
+      #playlist_id = @request.send_request["result"]["playlistID"]
+      #@request.delete_playlist(playlist_id)
+      #@request.send_request
+      #@request.undelete_playlist(playlist_id)
+      #response = @request.send_request["result"]["success"]
+      #expect(response).to be_truthy
+    #end
+  #end
+
+  
+  describe '.set_playlist_songs' do
+    it 'overwrites the songs in a playlist with new songs' do
+      @request.create_playlist("set_playlist_songs", [41999592, 41259399,41878461])
+      playlist_id = @request.send_request["result"]["playlistID"]
+
+      @request.set_playlist_songs(playlist_id, [40052463, 41864526, 41101068])
+      response = @request.send_request["result"]["success"]
+      expect(response).to be_truthy
+
+      @request.delete_playlist(playlist_id)
+      @request.send_request
     end
   end
 
 
   describe '.rename_playlist' do
     it 'renames a playlist' do
+      @request.create_playlist("rename_playlist_1", [41999592, 41259399,41878461])
+      playlist_id = @request.send_request["result"]["playlistID"]
+
+      @request.rename_playlist(playlist_id, "rename_playlist_2")
+      response = @request.send_request["result"]["success"]
+      expect(response).to be_truthy
+
+      @request.delete_playlist(playlist_id)
+      @request.send_request
+    end
+  end
+
+
+  describe '.subscribe_playlist' do
+    it 'subscribes the user to a playlist' do
+      @request.create_playlist("subscribe_playlist", [41999592, 41259399,41878461])
+      playlist_id = @request.send_request["result"]["playlistID"]
+
+      @request.subscribe_playlist(playlist_id)
+      response = @request.send_request["result"]["success"]
+      expect(response).to be_truthy
+
+      @request.delete_playlist(playlist_id)
+      @request.send_request
+    end
+  end
+
+
+  describe '.unsubscribe_playlist' do
+    it 'unsubscribes the user from a playlist' do
+      @request.create_playlist("subscribe_playlist", [41999592, 41259399,41878461])
+      playlist_id = @request.send_request["result"]["playlistID"]
+
+      @request.subscribe_playlist(playlist_id)
+      @request.send_request
+
+      @request.unsubscribe_playlist(playlist_id)
+      response = @request.send_request["result"]["success"]
+      expect(response).to be_truthy
+
+      @request.delete_playlist(playlist_id)
+      @request.send_request
+
     end
   end
 
 
   describe '.get_user_id_from_username' do
     it 'returns a valid userID' do
-    end
-  end
-
-
-  describe '.create_playlist' do
-    it 'creates a valid playlist' do
+      @request.get_user_id_from_username(USERNAME)
+      response = @request.send_request["result"]["UserID"]
+      expect(response).to eq(29763095)
     end
   end
 
 
   describe '.get_album_songs' do
     it 'returns the songs belonging to an album' do
+      @request.get_album_songs(7899898)
+      response = @request.send_request["result"]["songs"]
+      expect(response).not_to be_nil
     end
   end
 
 
-  describe '.get_artist_info' do
-    it 'returns info about a artist' do
+  describe '.get_artists_info' do
+    it 'returns info about multiple artists' do
+      @request.get_artists_info([1959275, 7863])
+      response = @request.send_request["result"]["artists"].count
+      expect(response).to eq(2)
     end
   end
 
 
-  describe '.get_album_info' do
-    it 'returns info about a album' do
+  describe '.get_albums_info' do
+    it 'returns info about multiple albums' do
+      @request.get_albums_info([7899898, 9978589])
+      response = @request.send_request["result"]["albums"].count
+      expect(response).to eq(2)
     end
   end
 
 
   describe '.get_songs_info' do
     it 'returns info about a song' do
+     @request.get_songs_info([41999592, 41259399, 41878461])
+      response = @request.send_request["result"]["songs"].count
+      expect(response).to eq(3)
     end
   end
 
 
   describe 'get_does_song_exist' do
     it 'returns true if a song exists' do
+      @request.get_does_song_exist(41999592)
+      response = @request.send_request["result"]
+      expect(response).to be_truthy
     end
   end
 
 
   describe 'get_does_artist_exist' do
     it 'returns true if an artist exists' do
+      @request.get_does_artist_exist(7863)
+      response = @request.send_request["result"]
+      expect(response).to be_truthy
     end
   end
 
 
   describe 'get_does_album_exist' do
     it 'returns true if an album exists' do
+      @request.get_does_album_exist(7899898)
+      response = @request.send_request["result"]
+      expect(response).to be_truthy
     end
   end
 
 
   describe '.get_artist_albums' do
     it 'gets all of the albums from an artist' do
+      @request.get_artist_albums(7863)
+      response = @request.send_request["result"]["albums"]
+      expect(response).not_to be_nil
     end
   end
 
 
   describe '.get_artist_verified_albums' do
     it 'returns the verified albums related to an artist' do
+      @request.get_artist_verified_albums(7863)
+      response = @request.send_request["result"]["albums"]
+      expect(response).not_to be_nil
     end
   end
 
-  describe '.get_artist_popular_song' do
+
+  describe '.get_artist_popular_songs' do
     it 'returns the top songs for the given artist' do
+      @request.get_artist_popular_songs(7863)
+      response = @request.send_request["result"]["songs"]
+      expect(response).not_to be_nil
     end
   end
+
 
   describe '.logout' do
     it 'logs a user out' do
       @request.logout
       response = @request.send_request["result"]["success"]
       expect(response).to be_truthy
+    end
+  end
+
+
+  describe '.start_session' do
+    it "Returuns an authenticated session_id" do
+      request = Request.new
+      status = request.start_session["result"]["success"]
+      expect(status).to be_truthy
     end
   end
 end
