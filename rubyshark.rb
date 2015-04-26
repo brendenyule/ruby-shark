@@ -80,7 +80,6 @@ class Request
     create_signature
   end
 
-  # Needs testing
   def remove_user_favorite_songs(song_ids)
     @payload[:method] = "removeUserFavoriteSongs"
     @payload[:parameters] = { :songIDs => song_ids }
@@ -106,7 +105,6 @@ class Request
     create_signature
   end
 
-  #
   def add_user_favorite_song(song_id)
     @payload[:method]     = "addUserFavoriteSong"
     @payload[:parameters] = { :songID => song_id }
@@ -114,7 +112,6 @@ class Request
     create_signature
   end
 
-  #
   def subscribe_playlist(playlist_id)
     @payload[:method]     = "subscribePlaylist"
     @payload[:parameters] = { :playlistID => playlist_id }
@@ -122,7 +119,6 @@ class Request
     create_signature
   end
 
-  #
   def unsubscribe_playlist(playlist_id)
     @payload[:method]     = "unsubscribePlaylist"
     @payload[:parameters] = { :playlistID => playlist_id }
@@ -137,7 +133,6 @@ class Request
     create_signature
   end
 
-  #
   def get_playlist_info(playlist_id)
     @payload[:method] = "getPlaylistInfo"
     @payload[:parameters] = { :playlistID => playlist_id }
@@ -171,7 +166,6 @@ class Request
     create_signature
   end
 
-  #
   def undelete_playlist(playlist_id)
     @payload[:method] = "undeletePlaylist"
     @payload[:parameters] = { :playlistID => playlist_id }
@@ -186,7 +180,6 @@ class Request
     create_signature
   end
 
-  #
   def get_playlist(playlist_id, limit = nil)
     @payload[:method] = "getPlaylistSongs"
     @payload[:parameters] = { :playlistID => playlist_id, 
@@ -194,7 +187,7 @@ class Request
     create_payload
     create_signature
   end
-  #
+
   def set_playlist_songs(playlist_id, song_ids)
     @payload[:method] = "setPlaylistSongs"
     @payload[:parameters] = { :playlistID => playlist_id,
@@ -203,7 +196,6 @@ class Request
     create_signature
   end
   
-  #
   def create_playlist(playlist_name, song_ids)
     @payload[:method] = "createPlaylist"
     @payload[:parameters] = { :name => playlist_name,
@@ -212,7 +204,6 @@ class Request
     create_signature
   end
 
-  #
   def rename_playlist(playlist_id, playlist_name)
     @payload[:method] = "renamePlaylist"
     @payload[:parameters] = { :playlistID => playlist_id,
@@ -221,7 +212,6 @@ class Request
     create_signature
   end
 
-  #
   def get_user_id_from_username(username)
     @payload[:method] = "getUserIDFromUsername"
     @payload[:parameters] = { :username => username }
@@ -229,7 +219,6 @@ class Request
     create_signature
   end
 
-  #
   def get_album_songs(album_id, limit = nil)
     @payload[:method] = "getAlbumSongs"
     @payload[:parameters] = { :albumID => album_id,
@@ -238,7 +227,6 @@ class Request
     create_signature
   end
 
-  #
   def get_artists_info(artist_ids)
     @payload[:method] = "getArtistsInfo"
     @payload[:parameters] = { :artistIDs => artist_ids }
@@ -246,7 +234,6 @@ class Request
     create_signature
   end
 
-  #
   def get_albums_info(album_ids)
     @payload[:method] = "getAlbumsInfo"
     @payload[:parameters] = { :albumIDs => album_ids }
@@ -254,7 +241,6 @@ class Request
     create_signature
   end
 
-  #
   def get_songs_info(song_ids)
     @payload[:method] = "getSongsInfo"
     @payload[:parameters] = { :songIDs => song_ids }
@@ -262,7 +248,6 @@ class Request
     create_signature
   end
 
-  #
   def get_does_song_exist(song_id)
     @payload[:method] = "getDoesSongExist"
     @payload[:parameters] = { :songID => song_id }
@@ -270,7 +255,6 @@ class Request
     create_signature
   end
 
-  #
   def get_does_artist_exist(artist_id)
     @payload[:method] = "getDoesArtistExist"
     @payload[:parameters] = { :artistID => artist_id }
@@ -278,7 +262,6 @@ class Request
     create_signature
   end
 
-  #
   def get_does_album_exist(album_id)
     @payload[:method] = "getDoesAlbumExist"
     @payload[:parameters] = { :albumID => album_id }
@@ -286,7 +269,6 @@ class Request
     create_signature
   end
 
-  #
   def get_artist_albums(artist_id)
     @payload[:method] = "getArtistAlbums"
     @payload[:parameters] = { :artistID => artist_id }
@@ -294,7 +276,6 @@ class Request
     create_signature
   end
 
-  #
   def get_artist_verified_albums(artist_id)
     @payload[:method] = "getArtistVerifiedAlbums"
     @payload[:parameters] = { :artistID => artist_id }
@@ -302,9 +283,8 @@ class Request
     create_signature
   end
 
-  #
   def get_artist_popular_songs(artist_id)
-    # Return 100 results!
+    # Returns 100 results!
     @payload[:method] = "getArtistPopularSongs"
     @payload[:parameters] = { :artistID => artist_id }
     create_payload
