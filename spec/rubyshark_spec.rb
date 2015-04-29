@@ -10,6 +10,7 @@ describe Request do
     ALBUM2  = 9978589
     ARTIST1 = 1959275
     ARTIST2 = 7863
+    QUERY   = "music"
 
   before :all do
       Request.new.start_session
@@ -73,6 +74,14 @@ describe Request do
     end
   end
 
+  describe '.get_song_search_results' do
+    it 'returns an array of songs' do
+      @request.get_song_search_results(QUERY)
+      response = @request.send_request["result"]["songs"]
+      expect(response).not_to be_nil
+    end
+  end
+
   describe '.add_user_favorite_song' do
     it 'adds a song to the favorites songs of the user' do
       @request.remove_user_favorite_songs(SONG2)
@@ -125,6 +134,14 @@ describe Request do
     end
   end
 
+  describe '.get_album_search_results' do
+    it 'returns an array of songs' do
+      @request.get_album_search_results(QUERY)
+      response = @request.send_request["result"]["albums"]
+      expect(response).not_to be_nil
+    end
+  end
+
   describe '.get_album_songs' do
     it 'returns the songs belonging to an album' do
       @request.get_album_songs(ALBUM2)
@@ -146,6 +163,14 @@ describe Request do
       @request.get_artists_info([ARTIST1, ARTIST2])
       response = @request.send_request["result"]["artists"].count
       expect(response).to eq(2)
+    end
+  end
+
+  describe '.get_artist_search_results' do
+    it 'returns an array of songs' do
+      @request.get_artist_search_results(QUERY)
+      response = @request.send_request["result"]["artists"]
+      expect(response).not_to be_nil
     end
   end
 
@@ -199,6 +224,14 @@ describe Request do
         @request.get_playlist_info(@playlist1_id)
         response = @request.send_request["result"]["PlaylistName"]
         expect(response).to eq("demo_playlist")
+      end
+    end
+
+    describe '.get_playlist_search_results' do
+      it 'returns an array of songs' do
+        @request.get_playlist_search_results(QUERY)
+        response = @request.send_request["result"]["playlists"]
+        expect(response).not_to be_nil
       end
     end
 

@@ -25,6 +25,7 @@ end
 class Request
   @@api_key = API_KEY
   @@header  = {:wsKey => @@api_key}
+  @@country = 0
 
   def initialize
     @payload  = Hash.new
@@ -48,13 +49,18 @@ class Request
   def create_signature
     @signature = Crypt.new(@jpayload).signature
   end
-
+ 
   def start_session
     @payload[:method] = "startSession"
     create_payload
     create_signature
     @@header[:sessionID] = JSON.parse(send_request.body)["result"]["sessionID"]
     authenticate(@username, @password)
+  end
+
+  def initialize_country
+    get_country
+    send_request
   end
 
   def authenticate(login, password)
@@ -99,10 +105,19 @@ class Request
     create_signature
   end
 
-
   def get_does_song_exist(song_id)
     @payload[:method]     = "getDoesSongExist"
     @payload[:parameters] = {:songID => song_id}
+    create_payload
+    create_signature
+  end
+
+  def get_song_search_results(query, country=nil, limit=10, offset=nil)
+    @payload[:method] = "getSongSearchResults"
+    @payload[:parameters] = {:query   => query,
+                             :country => @@country,
+                             :limit   => limit,
+                             :offset  => offset}
     create_payload
     create_signature
   end
@@ -156,6 +171,14 @@ class Request
     create_signature
   end
 
+  def get_album_search_results(query, limit=5)
+    @payload[:method] = "getAlbumSearchResults"
+    @payload[:parameters] = {:query => query,
+                             :limit => limit}
+    create_payload
+    create_signature
+  end
+
   def get_album_songs(album_id, limit = nil)
     @payload[:method]     = "getAlbumSongs"
     @payload[:parameters] = {:albumID => album_id}
@@ -173,6 +196,14 @@ class Request
   def get_artists_info(artist_ids)
     @payload[:method]     = "getArtistsInfo"
     @payload[:parameters] = {:artistIDs => artist_ids}
+    create_payload
+    create_signature
+  end
+
+  def get_artist_search_results(query, limit=5)
+    @payload[:method] = "getArtistSearchResults"
+    @payload[:parameters] = {:query => query,
+                             :limit => limit}
     create_payload
     create_signature
   end
@@ -210,6 +241,14 @@ class Request
   def get_playlist_info(playlist_id)
     @payload[:method]     = "getPlaylistInfo"
     @payload[:parameters] = {:playlistID => playlist_id}
+    create_payload
+    create_signature
+  end
+
+  def get_playlist_search_results(query, limit=5)
+    @payload[:method] = "getPlaylistSearchResults"
+    @payload[:parameters] = {:query => query,
+                             :limit => limit}
     create_payload
     create_signature
   end
@@ -277,7 +316,7 @@ class Request
     create_payload
     create_signature
   end
-  
+ 
   def get_country(ip = nil)
     @payload[:method]     = "getCountry"
     @payload[:parameters] = {:ip => ip}
@@ -294,11 +333,11 @@ end
 
 #Create a session_id for other methods to use
 session_init = Request.new
-session_init.start_session
+puts session_init.start_session
 
 #Simple hello_world test
 test = Request.new
-test.ping_service
+test.get_song_search_results("test")
 request = test.send_request
 request = JSON.parse(request.body)
 #puts request
