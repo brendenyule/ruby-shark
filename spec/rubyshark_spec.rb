@@ -12,7 +12,7 @@ describe Request do
   
   before :each do
     @request = Request.new
-      end
+  end
 
   describe '.get_user_id_from_username' do
     it 'returns a valid userID' do
@@ -21,7 +21,6 @@ describe Request do
       expect(response).to eq(29763095)
     end
   end
-
 
   describe '.get_user_info' do
     it 'returns the username of the user' do
@@ -37,7 +36,6 @@ describe Request do
     end
   end
 
-
   describe '.get_user_subscription_details' do
     it 'Should return false if user does not have plus membership' do
       @request.get_user_subscription_details
@@ -45,7 +43,6 @@ describe Request do
       expect(response).not_to be_truthy
     end
   end
-
 
   describe '.get_user_favorite_songs' do
     it 'does not return an error' do
@@ -55,6 +52,21 @@ describe Request do
     end
   end
 
+  describe 'get_does_song_exist' do
+    it 'returns true if a song exists' do
+      @request.get_does_song_exist(41999592)
+      response = @request.send_request["result"]
+      expect(response).to be_truthy
+    end
+  end
+
+  describe '.get_songs_info' do
+    it 'returns info about a song' do
+     @request.get_songs_info([41999592, 41259399, 41878461])
+      response = @request.send_request["result"]["songs"].count
+      expect(response).to eq(3)
+    end
+  end
 
   describe '.add_user_favorite_song' do
     it 'adds a song to the favorites songs of the user' do
@@ -65,9 +77,8 @@ describe Request do
       expect(response).to be_truthy
     end
   end
-  
 
-  describe '.remove_user_favorite_song' do
+  describe '.remove_user_favorite_songs' do
     it 'removes a song from the favorite songs of the user' do
       @request.add_user_favorite_song(41999592)
       @request.send_request
@@ -77,25 +88,6 @@ describe Request do
     end
   end
 
-
-  describe '.get_songs_info' do
-    it 'returns info about a song' do
-     @request.get_songs_info([41999592, 41259399, 41878461])
-      response = @request.send_request["result"]["songs"].count
-      expect(response).to eq(3)
-    end
-  end
-
-
-  describe 'get_does_song_exist' do
-    it 'returns true if a song exists' do
-      @request.get_does_song_exist(41999592)
-      response = @request.send_request["result"]
-      expect(response).to be_truthy
-    end
-  end
-
-
   describe '.get_popular_songs_today' do
     it 'returns top songs for the day' do
       @request.get_popular_songs_today
@@ -103,7 +95,6 @@ describe Request do
       expect(response).to include("songs")
     end
   end
-
 
   describe '.get_popular_songs_month' do
     it 'returns top songs for this month' do
@@ -113,15 +104,69 @@ describe Request do
     end
   end
 
-
-  describe '.get_service_description' do
-    it 'describes service methods' do
-      @request.get_service_description
-      response = @request.send_request["result"]["methods"]
+  describe 'get_does_album_exist' do
+    it 'returns true if an album exists' do
+      @request.get_does_album_exist(7899898)
+      response = @request.send_request["result"]
       expect(response).to be_truthy
     end
   end
 
+  describe '.get_albums_info' do
+    it 'returns info about multiple albums' do
+      @request.get_albums_info([7899898, 9978589])
+      response = @request.send_request["result"]["albums"].count
+      expect(response).to eq(2)
+    end
+  end
+
+  describe '.get_album_songs' do
+    it 'returns the songs belonging to an album' do
+      @request.get_album_songs(7899898)
+      response = @request.send_request["result"]["songs"]
+      expect(response).not_to be_nil
+    end
+  end
+
+  describe 'get_does_artist_exist' do
+    it 'returns true if an artist exists' do
+      @request.get_does_artist_exist(7863)
+      response = @request.send_request["result"]
+      expect(response).to be_truthy
+    end
+  end
+
+  describe '.get_artists_info' do
+    it 'returns info about multiple artists' do
+      @request.get_artists_info([1959275, 7863])
+      response = @request.send_request["result"]["artists"].count
+      expect(response).to eq(2)
+    end
+  end
+
+  describe '.get_artist_albums' do
+    it 'gets all of the albums from an artist' do
+      @request.get_artist_albums(7863)
+      response = @request.send_request["result"]["albums"]
+      expect(response).not_to be_nil
+    end
+  end
+
+  describe '.get_artist_verified_albums' do
+    it 'returns the verified albums related to an artist' do
+      @request.get_artist_verified_albums(7863)
+      response = @request.send_request["result"]["albums"]
+      expect(response).not_to be_nil
+    end
+  end
+
+  describe '.get_artist_popular_songs' do
+    it 'returns the top songs for the given artist' do
+      @request.get_artist_popular_songs(7863)
+      response = @request.send_request["result"]["songs"]
+      expect(response).not_to be_nil
+    end
+  end
 
   describe 'Playlist Methods' do
     before :each do
@@ -144,7 +189,6 @@ describe Request do
       end
     end
 
-
     describe '.get_playlist_info' do
       it 'returns info about a playlist' do
         @request.get_playlist_info(@playlist1_id)
@@ -152,7 +196,6 @@ describe Request do
         expect(response).to eq("demo_playlist")
       end
     end
-
 
     describe '.get_user_playlist' do
       it 'returns the playlists belonging to the user' do
@@ -168,7 +211,6 @@ describe Request do
       end
     end
 
-
     describe '.create_playlist' do
       it 'creates a playlist' do
         @request.create_playlist("create_playlist", [song1, song2, song3])
@@ -182,7 +224,6 @@ describe Request do
       end
     end
 
-
     describe '.delete_playlist' do
       it 'deletes a playlist' do
         @request.delete_playlist(@playlist1_id)
@@ -190,7 +231,6 @@ describe Request do
         expect(response).to be_truthy
       end
     end
-
 
     # method is not working as it should, might be restricted
     #describe '.undelete_playlist' do
@@ -204,7 +244,6 @@ describe Request do
         #expect(response).to be_truthy
       #end
     #end
-
     
     describe '.set_playlist_songs' do
       it 'overwrites the songs in a playlist with new songs' do
@@ -214,7 +253,6 @@ describe Request do
       end
     end
 
-
     describe '.rename_playlist' do
       it 'renames a playlist' do
         @request.rename_playlist(@playlist1_id, "rename_playlist")
@@ -223,7 +261,6 @@ describe Request do
       end
     end
 
-
     describe '.subscribe_playlist' do
       it 'subscribes the user to a playlist' do
         @request.subscribe_playlist(@playlist1_id)
@@ -231,7 +268,6 @@ describe Request do
         expect(response).to be_truthy
       end
     end
-
 
     describe '.unsubscribe_playlist' do
       it 'unsubscribes the user from a playlist' do
@@ -245,78 +281,6 @@ describe Request do
     end
   end # Playlist tests end here
 
-
-  describe 'get_does_album_exist' do
-    it 'returns true if an album exists' do
-      @request.get_does_album_exist(7899898)
-      response = @request.send_request["result"]
-      expect(response).to be_truthy
-    end
-  end
-
-
-  describe '.get_albums_info' do
-    it 'returns info about multiple albums' do
-      @request.get_albums_info([7899898, 9978589])
-      response = @request.send_request["result"]["albums"].count
-      expect(response).to eq(2)
-    end
-  end
-
-
-  describe '.get_album_songs' do
-    it 'returns the songs belonging to an album' do
-      @request.get_album_songs(7899898)
-      response = @request.send_request["result"]["songs"]
-      expect(response).not_to be_nil
-    end
-  end
-
-
-  describe 'get_does_artist_exist' do
-    it 'returns true if an artist exists' do
-      @request.get_does_artist_exist(7863)
-      response = @request.send_request["result"]
-      expect(response).to be_truthy
-    end
-  end
-
-  describe '.get_artists_info' do
-    it 'returns info about multiple artists' do
-      @request.get_artists_info([1959275, 7863])
-      response = @request.send_request["result"]["artists"].count
-      expect(response).to eq(2)
-    end
-  end
-
-
-  describe '.get_artist_albums' do
-    it 'gets all of the albums from an artist' do
-      @request.get_artist_albums(7863)
-      response = @request.send_request["result"]["albums"]
-      expect(response).not_to be_nil
-    end
-  end
-
-
-  describe '.get_artist_verified_albums' do
-    it 'returns the verified albums related to an artist' do
-      @request.get_artist_verified_albums(7863)
-      response = @request.send_request["result"]["albums"]
-      expect(response).not_to be_nil
-    end
-  end
-
-
-  describe '.get_artist_popular_songs' do
-    it 'returns the top songs for the given artist' do
-      @request.get_artist_popular_songs(7863)
-      response = @request.send_request["result"]["songs"]
-      expect(response).not_to be_nil
-    end
-  end
-
-
   describe '.ping_service' do
     it 'has a valid response' do
       @request.ping_service
@@ -324,7 +288,6 @@ describe Request do
       expect(response).to be_truthy
     end
   end
-
 
   describe '.get_country' do
     it 'returns a valid country id based when given ip' do
@@ -334,6 +297,13 @@ describe Request do
     end
   end
 
+  describe '.get_service_description' do
+    it 'describes service methods' do
+      @request.get_service_description
+      response = @request.send_request["result"]["methods"]
+      expect(response).to be_truthy
+    end
+  end
 
   describe '.logout' do
     it 'logs a user out' do
@@ -342,7 +312,6 @@ describe Request do
       expect(response).to be_truthy
     end
   end
-
 
   describe '.start_session' do
     it "Returuns an authenticated session_id" do
