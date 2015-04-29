@@ -158,7 +158,7 @@ class Request
 
   def get_album_songs(album_id, limit = nil)
     @payload[:method]     = "getAlbumSongs"
-    @payload[:parameters] = {:albumID => album_id,
+    @payload[:parameters] = {:albumID => album_id}
     create_payload
     create_signature
   end

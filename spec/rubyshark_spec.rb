@@ -2,9 +2,9 @@ require 'spec_helper.rb'
 require './rubyshark.rb'
 
 describe Request do
-    song1 = 41999592
-    song2 = 41259399
-    song3 = 41878461
+    SONG1 = 41999592
+    SONG2 = 41259399
+    SONG3 = 41878461
 
   before :all do
       Request.new.start_session
@@ -171,7 +171,7 @@ describe Request do
   describe 'Playlist Methods' do
     before :each do
       @playlist1 = Request.new
-      @playlist1.create_playlist("demo_playlist", [song1, song2, song3])
+      @playlist1.create_playlist("demo_playlist", [SONG1, SONG2, SONG3])
       @playlist1_id = @playlist1.send_request["result"]["playlistID"]
     end
 
@@ -213,7 +213,7 @@ describe Request do
 
     describe '.create_playlist' do
       it 'creates a playlist' do
-        @request.create_playlist("create_playlist", [song1, song2, song3])
+        @request.create_playlist("create_playlist", [SONG1, SONG2, SONG3])
         response = @request.send_request["result"]
         playlist_id = response["playlistID"]
         success = response["success"]
