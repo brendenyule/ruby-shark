@@ -22,8 +22,8 @@ describe Request do
   describe '.get_user_id_from_username' do
     it 'returns a valid userID' do
       @request.get_user_id_from_username(USERNAME)
-      response = @request.send_request["result"]["UserID"]
-      expect(response).to eq(29763095)
+      response = @request.send_request["result"]
+      expect(response).to include("UserID")
     end
   end
 
