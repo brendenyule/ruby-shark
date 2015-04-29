@@ -5,6 +5,11 @@ describe Request do
     SONG1 = 41999592
     SONG2 = 41259399
     SONG3 = 41878461
+    SONG_ARRAY = [SONG1, SONG2, SONG3] 
+    ALBUM1  = 7899898
+    ALBUM2  = 9978589
+    ARTIST1 = 1959275
+    ARTIST2 = 7863
 
   before :all do
       Request.new.start_session
@@ -54,7 +59,7 @@ describe Request do
 
   describe 'get_does_song_exist' do
     it 'returns true if a song exists' do
-      @request.get_does_song_exist(41999592)
+      @request.get_does_song_exist(SONG1)
       response = @request.send_request["result"]
       expect(response).to be_truthy
     end
@@ -62,7 +67,7 @@ describe Request do
 
   describe '.get_songs_info' do
     it 'returns info about a song' do
-     @request.get_songs_info([41999592, 41259399, 41878461])
+     @request.get_songs_info(SONG_ARRAY)
       response = @request.send_request["result"]["songs"].count
       expect(response).to eq(3)
     end
@@ -70,9 +75,9 @@ describe Request do
 
   describe '.add_user_favorite_song' do
     it 'adds a song to the favorites songs of the user' do
-      @request.remove_user_favorite_songs(41999592)
+      @request.remove_user_favorite_songs(SONG2)
       @request.send_request
-      @request.add_user_favorite_song(41999592)
+      @request.add_user_favorite_song(SONG2)
       response = @request.send_request["result"]["success"]
       expect(response).to be_truthy
     end
@@ -80,9 +85,9 @@ describe Request do
 
   describe '.remove_user_favorite_songs' do
     it 'removes a song from the favorite songs of the user' do
-      @request.add_user_favorite_song(41999592)
+      @request.add_user_favorite_song(SONG3)
       @request.send_request
-      @request.remove_user_favorite_songs(41999592)
+      @request.remove_user_favorite_songs(SONG3)
       response = @request.send_request["result"]["success"]
       expect(response).to be_truthy
     end
@@ -106,7 +111,7 @@ describe Request do
 
   describe 'get_does_album_exist' do
     it 'returns true if an album exists' do
-      @request.get_does_album_exist(7899898)
+      @request.get_does_album_exist(ALBUM1)
       response = @request.send_request["result"]
       expect(response).to be_truthy
     end
@@ -114,7 +119,7 @@ describe Request do
 
   describe '.get_albums_info' do
     it 'returns info about multiple albums' do
-      @request.get_albums_info([7899898, 9978589])
+      @request.get_albums_info([ALBUM1, ALBUM2])
       response = @request.send_request["result"]["albums"].count
       expect(response).to eq(2)
     end
@@ -122,7 +127,7 @@ describe Request do
 
   describe '.get_album_songs' do
     it 'returns the songs belonging to an album' do
-      @request.get_album_songs(7899898)
+      @request.get_album_songs(ALBUM2)
       response = @request.send_request["result"]["songs"]
       expect(response).not_to be_nil
     end
@@ -130,7 +135,7 @@ describe Request do
 
   describe 'get_does_artist_exist' do
     it 'returns true if an artist exists' do
-      @request.get_does_artist_exist(7863)
+      @request.get_does_artist_exist(ARTIST1)
       response = @request.send_request["result"]
       expect(response).to be_truthy
     end
@@ -138,7 +143,7 @@ describe Request do
 
   describe '.get_artists_info' do
     it 'returns info about multiple artists' do
-      @request.get_artists_info([1959275, 7863])
+      @request.get_artists_info([ARTIST1, ARTIST2])
       response = @request.send_request["result"]["artists"].count
       expect(response).to eq(2)
     end
@@ -146,7 +151,7 @@ describe Request do
 
   describe '.get_artist_albums' do
     it 'gets all of the albums from an artist' do
-      @request.get_artist_albums(7863)
+      @request.get_artist_albums(ARTIST2)
       response = @request.send_request["result"]["albums"]
       expect(response).not_to be_nil
     end
@@ -154,7 +159,7 @@ describe Request do
 
   describe '.get_artist_verified_albums' do
     it 'returns the verified albums related to an artist' do
-      @request.get_artist_verified_albums(7863)
+      @request.get_artist_verified_albums(ARTIST1)
       response = @request.send_request["result"]["albums"]
       expect(response).not_to be_nil
     end
@@ -162,7 +167,7 @@ describe Request do
 
   describe '.get_artist_popular_songs' do
     it 'returns the top songs for the given artist' do
-      @request.get_artist_popular_songs(7863)
+      @request.get_artist_popular_songs(ARTIST2)
       response = @request.send_request["result"]["songs"]
       expect(response).not_to be_nil
     end
@@ -247,7 +252,7 @@ describe Request do
     
     describe '.set_playlist_songs' do
       it 'overwrites the songs in a playlist with new songs' do
-        @request.set_playlist_songs(@playlist1_id, [40052463, 41864526, 41101068])
+        @request.set_playlist_songs(@playlist1_id, SONG_ARRAY)
         response = @request.send_request["result"]["success"]
         expect(response).to be_truthy
       end
