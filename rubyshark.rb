@@ -115,7 +115,7 @@ class Request
   end
 
   def get_song_search_results(query, country=nil, limit=10, offset=nil)
-    @payload[:method] = "getSongSearchResults"
+    @payload[:method]     = "getSongSearchResults"
     @payload[:parameters] = {:query   => query,
                              :country => @@country,
                              :limit   => limit,
