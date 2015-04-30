@@ -7,6 +7,7 @@ PASSWORD = open('classified/password').read.chomp
 
 class Crypt
   @@secret = SECRET
+
   def initialize(payload)
     @payload = payload
   end
@@ -65,7 +66,8 @@ class Request
 
   def authenticate(login, password)
     @payload[:method]     ="authenticateEx"
-    @payload[:parameters] = {:login => login, :password => password}
+    @payload[:parameters] = {:login    => login, 
+                             :password => password}
     #puts "payloadpayloadpayloadpayloadpayloadpayloadpayload"
     #puts @payload
     create_payload
@@ -172,7 +174,7 @@ class Request
   end
 
   def get_album_search_results(query, limit=5)
-    @payload[:method] = "getAlbumSearchResults"
+    @payload[:method]     = "getAlbumSearchResults"
     @payload[:parameters] = {:query => query,
                              :limit => limit}
     create_payload
@@ -181,7 +183,8 @@ class Request
 
   def get_album_songs(album_id, limit = nil)
     @payload[:method]     = "getAlbumSongs"
-    @payload[:parameters] = {:albumID => album_id}
+    @payload[:parameters] = {:albumID => album_id,
+                             :limit   => limit}
     create_payload
     create_signature
   end
@@ -201,7 +204,7 @@ class Request
   end
 
   def get_artist_search_results(query, limit=5)
-    @payload[:method] = "getArtistSearchResults"
+    @payload[:method]     = "getArtistSearchResults"
     @payload[:parameters] = {:query => query,
                              :limit => limit}
     create_payload
@@ -246,7 +249,7 @@ class Request
   end
 
   def get_playlist_search_results(query, limit=5)
-    @payload[:method] = "getPlaylistSearchResults"
+    @payload[:method]     = "getPlaylistSearchResults"
     @payload[:parameters] = {:query => query,
                              :limit => limit}
     create_payload
@@ -254,7 +257,8 @@ class Request
   end
 
   def get_user_playlists(limit=10)
-    @payload[:method] = "getuserplaylists"
+    @payload[:method]     = "getuserplaylists"
+    @payload[:parameters] = {:limit => limit}
     create_payload
     create_signature
   end
@@ -284,7 +288,7 @@ class Request
   def set_playlist_songs(playlist_id, song_ids)
     @payload[:method]     = "setPlaylistSongs"
     @payload[:parameters] = {:playlistID => playlist_id,
-                             :songIDs => song_ids}
+                             :songIDs    => song_ids}
     create_payload
     create_signature
   end
@@ -306,7 +310,7 @@ class Request
   def rename_playlist(playlist_id, playlist_name)
     @payload[:method]     = "renamePlaylist"
     @payload[:parameters] = {:playlistID => playlist_id,
-                             :name => playlist_name}
+                             :name       => playlist_name}
     create_payload
     create_signature
   end
@@ -337,7 +341,7 @@ puts session_init.start_session
 
 #Simple hello_world test
 test = Request.new
-test.get_song_search_results("test")
+test.ping_service
 request = test.send_request
 request = JSON.parse(request.body)
 #puts request
